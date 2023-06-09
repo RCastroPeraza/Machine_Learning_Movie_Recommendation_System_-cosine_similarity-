@@ -5,11 +5,11 @@ import pandas as pd
 import calendar 
 
 #import the data
-data= pd.read_csv('datasets\DEset.csv')
+data= pd.read_csv('datasets/DEset.csv')
 df = pd.DataFrame(data)
 df.drop_duplicates(subset='id',inplace=True)
 
-credits=pd.read_csv('datasets\credits_filtered.csv')
+credits=pd.read_csv('datasets/credits_filtered.csv')
 df_credits=pd.DataFrame(credits)
 
 #Create a FastAPI object
