@@ -17,7 +17,7 @@ df.drop_duplicates(subset='id',inplace=True)
 credits=pd.read_csv('datasets/credits_filtered.csv')
 df_credits=pd.DataFrame(credits)
 
-ml_set=pd.read_csv('datasets/datos_con_repeticiones2.csv')
+ml_set=pd.read_csv('datasets/datos_con_repeticiones.csv')
 ml_data= pd.DataFrame(ml_set)
 ml_data.drop_duplicates(subset='id',inplace=True)
 
