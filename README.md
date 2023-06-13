@@ -133,6 +133,7 @@ Con base en lo anterior expuesto se eliminaron **tagline* y **belongs_to_collect
 Posteriormente, se realizon análisis valores atípicos empleando diagramas de cajas y bigotes como se muestran en las figuras 3 y 4. 
 
 [![graficas.jpg](https://i.postimg.cc/gJh9rLQM/graficas.jpg)](https://postimg.cc/tZ9vMJXP)
+
 <sub>*Figura 3. Diagramas de cajas y bigotes para ls variables Recaudación, Duración, Presupuesto, Retorno y Popularidad*<sub>
 
 [![Base-de-datos-3.jpg](https://i.postimg.cc/RVcrv99m/Base-de-datos-3.jpg)](https://postimg.cc/w7T4kC74)
