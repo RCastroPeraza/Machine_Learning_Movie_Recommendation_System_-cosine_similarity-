@@ -191,7 +191,7 @@ def get_director(name:str):
     rows=dataset_per_director.shape[0]
 
     return {'director':name, 'retorno_total_director':total_return, 
-    'peliculas':dataset_per_director['Títtulos'].tolist(), 'anio':dataset_per_director['Fecha_de_Lanzamiento'].tolist(),
+    'peliculas':dataset_per_director['Títulos'].tolist(), 'anio':dataset_per_director['Fecha_de_Lanzamiento'].tolist(),
     'retorno_pelicula':dataset_per_director['Retorno'].tolist(), 
     'budget_pelicula':dataset_per_director['Presupuesto'].tolist(), 'revenue_pelicula':dataset_per_director['Recaudación'].tolist()}
 
