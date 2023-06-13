@@ -142,7 +142,7 @@ Posteriormente, se realizon análisis valores atípicos empleando diagramas de c
 De igual manera se generó un *bag of words* con los títulos de los films más populares como se ilustra en la figura 5.
 
 [![bagofwords.png](https://i.postimg.cc/FH59xDFr/bagofwords.png)](https://postimg.cc/PPysXb89)
-<sub>*Figura 5. Nubes de palabras con la variable **title***<sub>
+<sub>*Figura 5. Nube de palabras con la variable **title***<sub>
 
 **`Sistema de recomendación`**:  El sistema de recomendación está construido con base en un filtro híbrido. Debido a limitaciones en el almacenamiento se decidió depurar la base de datos más recomendadas a aquellas películas que cumplían con un mínimo de promedio de votos de 5 y una cantidad mínima de votos de 250. Con el filtrado anterior se generó un total de 3325 películas que serían las "más populares", siendo uno de los elementos del filtro colaborativo, posteriormenta para la construcción del modelo se utilizó una similtud de coseno de las variables **cast**, **director** (*crew* para el caso del código), **tagline**, **overview**, **production_company**, **genre** siendo evaluadas de acuerdo a la importancia descrita a continuación: 
 
@@ -161,6 +161,15 @@ Para concluir, se generó la función descrita a continuación:
     Se ingresa el nombre de una película y te recomienda las similares en una lista de 5 valores.
 
 <br/>
+
+## **Conclusiones**
+
+Los sistemas de recomendación de datos permiten optimizar el tiempo para asegurar una experiencia de calidad al usuario. Se ha convertido en una de las herramientas más importantes en la actualidad a raíz de permitir un aumento en el tiempo de consumo lo que se traduce en un incremento en la interacción al usuario. Para el actual proyecto es importante considerar las limitantes en espacio para el *deploy* y para el repositorio, lo que produjo que el porcentaje final de films que se tenía en la base de datos se redujera por debajo del 10%, cabe recalcar que a pesar de utilizar un porcentaje de importancia que permitiera que se repitiera alguna variable de mayor importancia, *features* como cast y género tenían en algunas películas una sola palabra y en otras 3 o más, lo que producía un impacto diferente en cada una de ellas. La optimización de la similitud del coseno pudo haber logrado al incluir el título, idioma disponible y posterior al cálculo de ellos, tomar un porcentaje de consideración el promedio de votación para dejar un primer filtro de 5 films parecidos y ordenarlos de acuerdo a la popularidad entre otros usuarios. Cabe recalcar que la información provista en el *bag of words* no fui incluida en el sistema de recomendación, a su ausencia se empleó *tagline* debido a que contiene un "brever resumen" de los temas de la obra. *Tagline* presentaba un problema de artificialización del *feature* debido a su gran cantidad de nulos, sin embargo, es usado por la ausencia de *keywords* que podrían beneficiar a la similitud entre films parecidos. 
+Para concluir, a pesar de que el sistema funciona bien en films como "Spider Man" donde arroja resultados como "Spider Man-2" y "Spider Man-3" es ineficiente en otros como "Iron Man" que genera una lista poco emparejada con el título provisto, sin embargo se cumple el objetivo al proveer de una lista de recomendación en diccionario siendo capaz de ser utilizado en formato json para el consumo de algún modelo más avanzado. A su vez, el objetivo del desarrollo de funciones de extracción de la API y el desarrollo de la EDA fueron satisfactoriamente logrados.
+
+## **Agradecimientos**
+
+Agradecimientos especiales a Romina Prestupa, Octavio Acosta, Jeremias Belardini y Mauricio Agustín.
 
 ## **Fuente de datos**
 
