@@ -17,14 +17,6 @@ df.drop_duplicates(subset='id',inplace=True)
 credits=pd.read_csv('datasets/credits_filtered.csv')
 df_credits=pd.DataFrame(credits)
 
-ml_set=pd.read_csv('datasets/datos_con_repeticiones.csv')
-ml_data= pd.DataFrame(ml_set)
-
-#selected_features = ['genres_filtered','tagline','cast_filtered','crew_filtered','overview','production_companies_filtered']
-
-#for feature in selected_features:
-#  ml_data[feature] = ml_data[feature].fillna('')
-
 #Create a FastAPI object
 app=FastAPI()
 #http://127.0.0.1:8000
@@ -206,7 +198,18 @@ def get_director(name:str):
 #ML
 
 #The creation of the data in rows 
-#combined_features = (ml_data['genres_filtered']+ ' ').str.repeat(25)+ (ml_data['tagline'] + ' ').str.repeat(10) + (ml_data['cast_filtered'] + ' ').str.repeat(20) + (ml_data['crew_filtered']+' ').str.repeat(15)+(ml_data['production_companies_filtered']+' ').str.repeat(20)+(ml_data['overview']).str.repeat(10)
+
+ml_data=df.copy()
+ml_data['cast_filtered'] = ml_data['cast_filtered'].str.replace("[\[\]',]", "").str.strip()
+ml_data['genres_filtered'] = ml_data['genres_filtered'].str.replace("[\[\]',]", "").str.strip()
+ml_data['production_companies_filtered'] = ml_data['production_companies_filtered'].str.replace("[\[\]',]", "").str.strip()
+
+selected_features = ['genres_filtered','tagline','cast_filtered','crew_filtered','overview','production_companies_filtered']
+
+for feature in selected_features:
+  ml_data[feature] = ml_data[feature].fillna('')
+
+combined_features = (ml_data['genres_filtered']+ ' ').str.repeat(25)+ (ml_data['tagline'] + ' ').str.repeat(10) + (ml_data['cast_filtered'] + ' ').str.repeat(20) + (ml_data['crew_filtered']+' ').str.repeat(15)+(ml_data['production_companies_filtered']+' ').str.repeat(20)+(ml_data['overview']).str.repeat(10)
 combined_features=ml_data['combined_features']
 
 #vectorization
@@ -219,6 +222,7 @@ movies_list= ml_data['title'].tolist()
 
 @app.get('/recomendacion/{titulo}')
 def recomendacion(titulo:str):
+
     '''Ingresas un nombre de pelicula y te recomienda las similares en una lista'''
     #Interaction with user
     movie_name=titulo
