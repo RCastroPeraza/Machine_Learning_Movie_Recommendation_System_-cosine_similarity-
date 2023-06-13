@@ -1,8 +1,13 @@
-from fastapi import FastAPI
+#Username: RCastroPeraza
+#Date: 2023 June 12
 
 #Importing the libraries
+from fastapi import FastAPI
 import pandas as pd
 import calendar 
+import difflib
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 #import the data
 data= pd.read_csv('datasets/DEset.csv')
@@ -11,6 +16,10 @@ df.drop_duplicates(subset='id',inplace=True)
 
 credits=pd.read_csv('datasets/credits_filtered.csv')
 df_credits=pd.DataFrame(credits)
+
+ml_set=pd.read_csv('datasets/MLset.csv')
+ml_data= pd.DataFrame(data)
+ml_data.drop_duplicates(subset='id',inplace=True)
 
 #Create a FastAPI object
 app=FastAPI()
@@ -25,7 +34,8 @@ def bienvenida():
 df['release_date'] = pd.to_datetime(df['release_date']) 
 
 @app.get("/cantidad_filmaciones_mes/{Mes}")
-def cantidad_filmaciones_mes(Mes):
+def cantidad_filmaciones_mes(Mes:str):
+    '''Se ingresa el mes y la funcion retorna la cantidad de peliculas que se estrenaron ese mes historicamente'''
     errormessage = 'Has ingresado un nombre de mes inválido, intenta otra vez ingresando el nombre del mes en español y sin ", gracias.'
     meses_validos = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
     
@@ -37,7 +47,8 @@ def cantidad_filmaciones_mes(Mes):
     df_mes = df[df['release_date'].dt.month == No_mes]
     No_peliculas = len(df_mes)
 
-    return "{} película fueron estrenadas en el mes {}".format(No_peliculas,Mes)
+    return {'Mes':Mes, 'cantidad':No_peliculas}
+
 
 #Films per day of the week
 def convertir_dia(dia):
@@ -64,7 +75,8 @@ def convertir_dia(dia):
     return None
 
 @app.get("/cantidad_filmaciones_dia/{Dia}")
-def cantidad_filmaciones_dia(Dia):
+def cantidad_filmaciones_dia(Dia:str):
+    '''Se ingresa el dia y la funcion retorna la cantidad de peliculas que se estrebaron ese dia historicamente'''
     errormessage = 'Has ingresado un nombre de día inválido, intenta otra vez'
     dias_validos = ['lunes', 'martes', 'miércoles', 'jueves','viernes','sábado', 'domingo']
     
@@ -76,12 +88,14 @@ def cantidad_filmaciones_dia(Dia):
     df_dia = df[df['release_date'].dt.strftime("%A") == day]
     No_peliculas = len(df_dia)
 
-    return "{} películas fueron estrenadas en  {}".format(No_peliculas,Dia)
+    return {'dia':Dia, 'cantidad':No_peliculas}
+
 
 #Films by title 
 
 @app.get("/score_titulo/{titulo}")
-def score_titulo(titulo):
+def score_titulo(titulo:str):
+    '''Se ingresa el título de una filmación esperando como respuesta el título, el año de estreno y el score'''
     df_titulo = df[df['title'] == titulo]
     df_titulo.drop(['Unnamed: 0', 'budget', 'id', 'original_language', 'overview',
         'release_date', 'revenue', 'runtime', 'status', 'tagline',
@@ -93,12 +107,14 @@ def score_titulo(titulo):
     year= int(df_titulo['release_year'])
     popularity=float(df_titulo['popularity'])
 
-    return "{} fue estrenada en {} siendo rankeada en popularidad con {}".format(titulo, year, popularity)
-
+    return  {'titulo':titulo, 'anio':year, 'popularidad':popularity}
 #Films by title and the votes
 
 @app.get("/votos_titulo/{titulo}")
-def votos_titulo(titulo):
+def votos_titulo(titulo:str):
+    '''Se ingresa el título de una filmación esperando como respuesta el título, la cantidad de votos y el valor promedio de las votaciones. 
+    La misma variable deberá de contar con al menos 2000 valoraciones, 
+    caso contrario, debemos contar con un mensaje avisando que no cumple esta condición y que por ende, no se devuelve ningun valor.'''
     df_titulo = df[df['title'] == titulo]
     df_titulo.drop(['Unnamed: 0', 'budget', 'id', 'original_language', 'overview',
         'release_date', 'revenue', 'runtime', 'status', 'tagline',
@@ -110,10 +126,12 @@ def votos_titulo(titulo):
     vote_count= int(df_titulo['vote_count'])
     vote_average=float(df_titulo['vote_average'])
 
-    if vote_count>=2000:
-        return "{} fue estrenada en {} siendo contando con un total de valores de {} con un promedio de {}".format(titulo, year, vote_count,vote_average)
+    if vote_count >= 2000:
+        return {'titulo': titulo, 'anio': year, 'voto_total': vote_count, 'voto_promedio': vote_average}
     else:
-        return "{} no contó con un mínimo de 2000 valoraciones".format(titulo)
+        return f"{titulo} no contó con un mínimo de 2000 valoraciones"
+
+    
     
 #Films by the cast
 
@@ -128,7 +146,9 @@ def get_ids_cast(name):
     return result
 
 @app.get("/get_actor/{name}")
-def get_actor(name):
+def get_actor(name:str):
+    '''Se ingresa el nombre de un actor que se encuentre dentro de un dataset debiendo devolver el éxito del mismo medido a través del retorno. 
+    Además, la cantidad de películas que en las que ha participado y el promedio de retorno'''
     total_return=0
     ids_films= get_ids_cast(name)
 
@@ -139,8 +159,7 @@ def get_actor(name):
     total_films=len(ids_films)
     average_return=total_return/total_films
 
-    return "{} ha obtenido un retorno de {} gracias a su participación en {} películas, dando un promedio por films de {} ".format(name, total_return,total_films,average_return)
-
+    return {'actor':name, 'cantidad_filmaciones':total_films, 'retorno_total':total_return, 'retorno_promedio':average_return}
 
 #Films by the director
 
@@ -155,7 +174,9 @@ def get_ids_crew(name):
     return ids
 
 @app.get("/get_director/{name}")
-def get_director(name):
+def get_director(name:str):
+    ''' Se ingresa el nombre de un director que se encuentre dentro de un dataset debiendo devolver el éxito del mismo medido a través del retorno. 
+    Además, deberá devolver el nombre de cada película con la fecha de lanzamiento, retorno individual, costo y ganancia de la misma.'''
     ids_films = get_ids_crew(name)
 
     dataset_per_director = df.query('id in @ids_films').copy()
@@ -173,6 +194,48 @@ def get_director(name):
     total_return = dataset_per_director['Retorno'].sum()
     rows=dataset_per_director.shape[0]
 
-    message="{} ha obtenido un retorno de {}".format(name, total_return)
-    Nota= "la información a la izquierda corresponde al ID registrado, puede ser usado para verificar la información del film en específico"
-    return message, Nota, dataset_per_director.head(rows)
+    return {'director':name, 'retorno_total_director':total_return, 
+    'peliculas':dataset_per_director['Títtulos'].tolist(), 'anio':dataset_per_director['Fecha_de_Lanzamiento'].tolist(),
+    'retorno_pelicula':dataset_per_director['Retorno'].tolist(), 
+    'budget_pelicula':dataset_per_director['Presupuesto'].tolist(), 'revenue_pelicula':dataset_per_director['Recaudación'].tolist()}
+
+#ML
+
+#The creation of the data in rows 
+combined_features = (ml_data['genres_filtered']+ ' ').str.repeat(25)+ (ml_data['tagline'] + ' ').str.repeat(10) + (ml_data['cast_filtered'] + ' ').str.repeat(20) + (ml_data['crew_filtered']+' ').str.repeat(15)+(ml_data['production_companies_filtered']+' ').str.repeat(20)+(ml_data['overview']).str.repeat(10)
+
+#vectorization
+vectorizer = TfidfVectorizer()
+feature_vectors=vectorizer.fit_transform(combined_features)
+
+#Cosine similarity
+similarity = cosine_similarity(feature_vectors)
+movies_list= ml_data['title'].tolist()
+
+@app.get('/recomendacion/{titulo}')
+def recomendacion(titulo:str):
+    '''Ingresas un nombre de pelicula y te recomienda las similares en una lista'''
+    #Interaction with user
+    movie_name=titulo
+    #Closest match
+    find_close_match = difflib.get_close_matches(movie_name, movies_list)
+
+    #Closest match possible in the data
+    close_match = find_close_match[0]
+    id_of_the_movie = ml_data[ml_data.title == close_match]['id'].values[0]
+
+    #Obtain the more similar movie
+    similarity_score = list(enumerate(similarity[id_of_the_movie]))
+    sorted_similar_movies = sorted(similarity_score, key = lambda x:x[1], reverse = True) 
+
+    recommendation_movies=[]
+    for movie in sorted_similar_movies:
+        id = movie[0]
+        filtered_df = ml_data[ml_data['id'] == id]
+        if not filtered_df.empty:
+            title_from_id = filtered_df['title'].values[0]
+        if i < 6:
+            recommendation_movies.append(title_from_id)
+            i += 1
+
+    return {'lista recomendada': recommendation_movies}
