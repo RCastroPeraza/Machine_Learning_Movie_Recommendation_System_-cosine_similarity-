@@ -162,6 +162,13 @@ Para concluir, se generó la función descrita a continuación:
 
 <br/>
 
+## **Entregables**
+
+El dataset resultado de *Tranformación* está disponible en la carpeta datasets con el nombre *DEset* está construido de acuerdo a las instrucciones provistas. 
+El link del deploy de la API con sus 7 funciones se encuentra: https://deploy-rcastroperaza-proyecto-individual.onrender.com
+El EDA se encuentra descrito en la parte de metolodogía del README y en el video mismo que se llama en este link: https://drive.google.com/file/d/1pncnUCg3KYllmstrw6kw8gxMOBU6CoVz/view?usp=sharing 
+
+
 ## **Conclusiones**
 
 Los sistemas de recomendación de datos permiten optimizar el tiempo para asegurar una experiencia de calidad al usuario. Se ha convertido en una de las herramientas más importantes en la actualidad a raíz de permitir un aumento en el tiempo de consumo lo que se traduce en un incremento en la interacción al usuario. Para el actual proyecto es importante considerar las limitantes en espacio para el *deploy* y para el repositorio, lo que produjo que el porcentaje final de films que se tenía en la base de datos se redujera por debajo del 10%, cabe recalcar que a pesar de utilizar un porcentaje de importancia que permitiera que se repitiera alguna variable de mayor importancia, *features* como cast y género tenían en algunas películas una sola palabra y en otras 3 o más, lo que producía un impacto diferente en cada una de ellas. La optimización de la similitud del coseno pudo haber logrado al incluir el título, idioma disponible y posterior al cálculo de ellos, tomar un porcentaje de consideración el promedio de votación para dejar un primer filtro de 5 films parecidos y ordenarlos de acuerdo a la popularidad entre otros usuarios. Cabe recalcar que la información provista en el *bag of words* no fui incluida en el sistema de recomendación, a su ausencia se empleó *tagline* debido a que contiene un "brever resumen" de los temas de la obra. *Tagline* presentaba un problema de artificialización del *feature* debido a su gran cantidad de nulos, sin embargo, es usado por la ausencia de *keywords* que podrían beneficiar a la similitud entre films parecidos. 
