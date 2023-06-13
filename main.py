@@ -17,9 +17,14 @@ df.drop_duplicates(subset='id',inplace=True)
 credits=pd.read_csv('datasets/credits_filtered.csv')
 df_credits=pd.DataFrame(credits)
 
-ml_set=pd.read_csv('datasets/new_df.csv')
-ml_data= pd.DataFrame(data)
+ml_set=pd.read_csv('datasets/datos_con_repeticiones.csv')
+ml_data= pd.DataFrame(ml_set)
 ml_data.drop_duplicates(subset='id',inplace=True)
+
+#selected_features = ['genres_filtered','tagline','cast_filtered','crew_filtered','overview','production_companies_filtered']
+
+#for feature in selected_features:
+#  ml_data[feature] = ml_data[feature].fillna('')
 
 #Create a FastAPI object
 app=FastAPI()
@@ -202,7 +207,8 @@ def get_director(name:str):
 #ML
 
 #The creation of the data in rows 
-combined_features = (ml_data['genres_filtered']+ ' ').str.repeat(25)+ (ml_data['tagline'] + ' ').str.repeat(10) + (ml_data['crew_filtered']+' ').str.repeat(15)+(ml_data['production_companies_filtered']+' ').str.repeat(20)+(ml_data['overview']).str.repeat(10)
+#combined_features = (ml_data['genres_filtered']+ ' ').str.repeat(25)+ (ml_data['tagline'] + ' ').str.repeat(10) + (ml_data['cast_filtered'] + ' ').str.repeat(20) + (ml_data['crew_filtered']+' ').str.repeat(15)+(ml_data['production_companies_filtered']+' ').str.repeat(20)+(ml_data['overview']).str.repeat(10)
+combined_features=ml_data['combined_features']
 
 #vectorization
 vectorizer = TfidfVectorizer()
@@ -228,14 +234,20 @@ def recomendacion(titulo:str):
     similarity_score = list(enumerate(similarity[id_of_the_movie]))
     sorted_similar_movies = sorted(similarity_score, key = lambda x:x[1], reverse = True) 
 
-    recommendation_movies=[]
+    i = 1
+    recommendation_movies = []
+    added_movies = set()  # Utilizar un conjunto para rastrear las películas agregadas
+
     for movie in sorted_similar_movies:
         id = movie[0]
         filtered_df = ml_data[ml_data['id'] == id]
         if not filtered_df.empty:
             title_from_id = filtered_df['title'].values[0]
-        if i < 6:
+        if title_from_id not in added_movies:  # Verificar si la película ya está en la lista
             recommendation_movies.append(title_from_id)
+            added_movies.add(title_from_id)  # Agregar la película al conjunto de películas agregadas
             i += 1
-
+        if i >= 6:
+            break  # Detener el bucle si se han agregado suficientes películas a la lista
+    
     return {'lista recomendada': recommendation_movies}
