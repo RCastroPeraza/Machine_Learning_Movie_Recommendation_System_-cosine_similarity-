@@ -202,7 +202,7 @@ def get_director(name:str):
 #ML
 
 #The creation of the data in rows 
-combined_features = (ml_data['genres_filtered']+ ' ').str.repeat(25)+ (ml_data['tagline'] + ' ').str.repeat(10) + (ml_data['cast_filtered'] + ' ').str.repeat(20) + (ml_data['crew_filtered']+' ').str.repeat(15)+(ml_data['production_companies_filtered']+' ').str.repeat(20)+(ml_data['overview']).str.repeat(10)
+combined_features = (ml_data['genres_filtered']+ ' ').str.repeat(25)+ (ml_data['tagline'] + ' ').str.repeat(10) + (ml_data['crew_filtered']+' ').str.repeat(15)+(ml_data['production_companies_filtered']+' ').str.repeat(20)+(ml_data['overview']).str.repeat(10)
 
 #vectorization
 vectorizer = TfidfVectorizer()
