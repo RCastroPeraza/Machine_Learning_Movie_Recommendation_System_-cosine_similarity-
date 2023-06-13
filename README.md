@@ -134,8 +134,9 @@ Posteriormente, se realizon análisis valores atípicos empleando diagramas de c
 
 <p align="center">
 <img src=(https://i.postimg.cc/JhsBBpp1/Base-de-datos-2.jpg)](https://postimg.cc/nstLyG85)
-<sub>*Figura 3. Diagramas de cajas y bigotes para ls variables Recaudación, Duración, Presupuesto, Retorno y Popularidad*<sub>
 </p>
+
+<sub>*Figura 3. Diagramas de cajas y bigotes para ls variables Recaudación, Duración, Presupuesto, Retorno y Popularidad*<sub>
 
 [![Base-de-datos-3.jpg](https://i.postimg.cc/RVcrv99m/Base-de-datos-3.jpg)](https://postimg.cc/w7T4kC74)
 <sub>*Figura 4. Diagramas de cajas y bigotes para ls variables Promedio de votos y cantidad de votos*<sub>
