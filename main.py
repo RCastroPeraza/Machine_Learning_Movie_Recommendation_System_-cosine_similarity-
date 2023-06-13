@@ -199,7 +199,9 @@ def get_director(name:str):
 
 #The creation of the data in rows 
 
-ml_data=df.copy()
+ml_data_preliminar= pd.merge(df, df_credits, on='id')
+ml_data=ml_data_preliminar[ml_data_preliminar['vote_count'] > 250] #Condition in order to decrease the amount of data used by the program
+
 ml_data['cast_filtered'] = ml_data['cast_filtered'].str.replace("[\[\]',]", "").str.strip()
 ml_data['genres_filtered'] = ml_data['genres_filtered'].str.replace("[\[\]',]", "").str.strip()
 ml_data['production_companies_filtered'] = ml_data['production_companies_filtered'].str.replace("[\[\]',]", "").str.strip()
@@ -210,7 +212,6 @@ for feature in selected_features:
   ml_data[feature] = ml_data[feature].fillna('')
 
 combined_features = (ml_data['genres_filtered']+ ' ').str.repeat(25)+ (ml_data['tagline'] + ' ').str.repeat(10) + (ml_data['cast_filtered'] + ' ').str.repeat(20) + (ml_data['crew_filtered']+' ').str.repeat(15)+(ml_data['production_companies_filtered']+' ').str.repeat(20)+(ml_data['overview']).str.repeat(10)
-combined_features=ml_data['combined_features']
 
 #vectorization
 vectorizer = TfidfVectorizer()
