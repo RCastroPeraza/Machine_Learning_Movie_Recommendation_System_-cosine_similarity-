@@ -19,7 +19,6 @@ df_credits=pd.DataFrame(credits)
 
 ml_set=pd.read_csv('datasets/datos_con_repeticiones.csv')
 ml_data= pd.DataFrame(ml_set)
-ml_data.drop_duplicates(subset='id',inplace=True)
 
 #selected_features = ['genres_filtered','tagline','cast_filtered','crew_filtered','overview','production_companies_filtered']
 
